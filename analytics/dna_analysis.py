@@ -1,5 +1,7 @@
 """provides analysis on DNA sequences"""
 
+from itertools import zip_longest
+
 
 
 def ATGC_content(DNA):
@@ -46,17 +48,14 @@ def hamming_differences(DNA1, DNA2):
     """Returns info on positional/nucleotide differences in 2 DNA strands in
     the form of a list"""
     hDiff = []
-
-    if len(DNA1) > len(DNA2):
-        for i in range(len(DNA1)):
-            DNA2 += 'X'
-    else:
-        for i in range(len(DNA2)):
-            DNA1 += 'X'
-    for n1, n2 in list(zip(DNA1, DNA2)):
+    for loc, (n1, n2) in enumerate(zip_longest(DNA1, DNA2, fillvalue='X')):
         if n1 != n2:
-            locDiff = list(zip(DNA1, DNA2)).index((n1, n2))
-            nucDiff = n1 + n2
-            print(str(locDiff) + nucDiff)
-            hDiff.append(str(locDiff) + nucDiff)
+            diff = loc + n1 + n2
+            hDiff.append(diff)
     return hDiff
+
+def hamming_distance(DNA1, DNA2):
+    """Return the Hamming distance between equal-length sequences"""
+    if len(DNA1) != len(DNA2):
+        raise ValueError("Undefined for sequences of unequal length")
+    return sum(el1 != el2 for el1, el2 in zip(s1, s2))
